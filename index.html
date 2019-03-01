@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8" />
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dat-gui/0.7.5/dat.gui.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@0.13.3"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/posenet@0.2.3"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stats.js/r16/Stats.min.js"></script>
+    <title>Walks</title>
+    <style media="screen">
+      video#display_vid {
+        position: fixed;
+        right: 0;
+        bottom: 0;
+        min-width: 100%;
+        min-height: 100%;
+        width: auto;
+        height: auto;
+        /* z-index: 1; */
+        /* background-size: cover; */
+        background-size: contain;
+      }
+    </style>
+  </head>
+  <body>
+    <video id="display_vid" width="1280" height="720">
+      <source src="vt_lake.mp4" type="video/mp4" />
+    </video>
+    <video
+      id="video"
+      playsinline
+      style=" -moz-transform: scaleX(-1);
+-o-transform: scaleX(-1);
+-webkit-transform: scaleX(-1);
+transform: scaleX(-1);
+display: none;
+"
+    ></video>
+    <canvas id="output"></canvas>
+
+    <script type="text/javascript"></script>
+    <script src="camera.js" charset="utf-8"></script>
+    <script type="text/javascript">
+      let has_played = false;
+      let has_loaded_data = false;
+      window.last_distance = 0;
+      let player = document.getElementById("display_vid");
+      player.addEventListener("canplay", function() {
+        // console.log("can play");
+        if (!has_played && has_loaded_data) {
+          // console.log("do it");
+          // player.play();
+          player.pause();
+          has_played = true;
+        }
+      });
+      player.addEventListener(
+        "loadeddata",
+        function() {
+          has_loaded_data = true;
+          console.log("viddata loaded", player.duration);
+          window.main_scale = d3
+            .scaleLinear()
+            // .domain([25, 85])
+            .domain([200, 400])
+            .range([0, player.duration]);
+
+          bindPage();
+          //player.currentTime = 5;
+        },
+        false
+      );
+    </script>
+  </body>
+</html>
