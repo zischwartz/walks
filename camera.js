@@ -1,6 +1,10 @@
 // Totally taken from
 // https://github.com/tensorflow/tfjs-models/blob/master/posenet/demos/demo_util.js
 
+function mod(n, m) {
+  return ((n % m) + m) % m;
+}
+
 const videoWidth = 600;
 const videoHeight = 500;
 const stats = new Stats();
@@ -298,10 +302,13 @@ function detectPoseInRealTime(video, net) {
       let dist_between = left.position.x - right.position.x;
       let diff_from_last = Math.abs(window.last_distance - dist_between);
       let smoothed_dist = (window.last_distance + dist_between) / 2;
+      // the problem is it's negative TODO window.main_scale(smoothed_dist)
       // or use diff_from_last but jerkier
-      // console.log(smoothed_dist);
-      let to_time =
-        window.main_scale(smoothed_dist) % window.main_scale.range()[1];
+      // console.log(window.main_scale(smoothed_dist));
+      let to_time = mod(
+        window.main_scale(smoothed_dist),
+        window.main_scale.range()[1]
+      );
       // console.log("dist_between:", dist_between);
       // console.log("to_time", to_time);
       // console.log("diff_from_last:", diff_from_last);
